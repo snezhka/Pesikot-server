@@ -12,10 +12,12 @@ export interface IUserCreateRequest {
 }
 
 export interface IUserSignInResponse {
-    access_token: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export interface IUserWhereQuery {
+    id?: number;
     email: string;
     username?: string;
 }

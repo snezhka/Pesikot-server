@@ -4,5 +4,8 @@ import { BaseResponseDto } from "../../utils/base-response.dto";
 
 export class SignInUserResponseDto extends BaseResponseDto<ISignInResponse> implements ISignInResponse {
     @Expose()
-    access_token: string;
+    accessToken: string;
+
+    @Expose()
+    refreshToken: string;
 }

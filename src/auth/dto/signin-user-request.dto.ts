@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { ISignInRequest } from "src/utils/interfaces/auth";
 
 export class SignInUserRequestDto implements ISignInRequest {
@@ -7,5 +7,6 @@ export class SignInUserRequestDto implements ISignInRequest {
 
     @IsString()
     @IsNotEmpty()
+    // @Matches()
     password!: string;
 }
