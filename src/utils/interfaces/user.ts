@@ -1,14 +1,30 @@
+import { JsonValue } from "@prisma/client/runtime/library";
+
 export interface IUser {
     id: number;
-    username: string;
+    username?: string;
+    phoneNumber?: string,
     email: string;
     password: string;
+    metadata?: JsonValue | null;
+
 }
 
 export interface IUserCreateRequest {
     username?: string;
-    email: string;
+    email?: string;
+    phoneNumber?: string;
     password: string;
+    passwordConfirm: string;
+    metadata?: JsonValue | null;
+}
+
+export interface IUserCreateByPhoneNumber {
+    phoneNumber: string,
+}
+
+export interface IUserCreateByPhoneNumber {
+    phoneNumber: string;
 }
 
 export interface IUserSignInResponse {
@@ -16,8 +32,20 @@ export interface IUserSignInResponse {
     refreshToken: string;
 }
 
-export interface IUserWhereQuery {
-    id?: number;
+
+export interface IUserByEmailWhereQuery {
     email: string;
-    username?: string;
 }
+
+export interface IUserByUsernameWhereQuery {
+    username: string;
+}
+
+export interface IUserByPhoneNumberWhereQuery {
+    phoneNumber: string;
+}
+
+export interface IUserByIdWhereQuery {
+    id: number;
+}
+

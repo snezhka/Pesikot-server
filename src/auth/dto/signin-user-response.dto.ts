@@ -1,11 +1,13 @@
-import { Expose } from "class-transformer";
+import { IsNotEmpty, IsString } from "class-validator";
 import { ISignInResponse } from "src/utils/interfaces/auth";
 import { BaseResponseDto } from "../../utils/base-response.dto";
 
 export class SignInUserResponseDto extends BaseResponseDto<ISignInResponse> implements ISignInResponse {
-    @Expose()
+    @IsString()
+    @IsNotEmpty()
     accessToken: string;
 
-    @Expose()
+    @IsString()
+    @IsNotEmpty()
     refreshToken: string;
 }

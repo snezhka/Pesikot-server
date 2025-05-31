@@ -1,0 +1,11 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table users {
+  id Int [pk, increment]
+  email String [unique, not null]
+  username String [unique]
+  password String [not null]
+  metadata Json
+}

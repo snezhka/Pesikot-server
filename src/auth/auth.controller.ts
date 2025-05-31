@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Param, Body, HttpException, HttpStatus, UsePipes, HttpCode, UseGuards, Request, Req, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus, HttpCode, Headers, Res, HttpException, Req, Header, BadRequestException } from '@nestjs/common';
 import { SignUpUserRequestDto } from './dto/signup-user-request.dto';
 import { SignInUserRequestDto } from './dto/signin-user-request.dto';
 import { AuthService } from './auth.service';
 import { SignInUserResponseDto } from './dto/signin-user-response.dto';
-import { AuthGuard } from './auth.guard';
-import { Public } from 'src/user/user.decorator';
-import { IUserWhereQuery } from 'src/utils/interfaces/user';
+import { Public } from 'src/utils/decorators';
+import { AccessResponseDto } from './dto/access.dto.response';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Response } from 'express';
 
 @Controller()
 export class AuthController {
@@ -26,23 +28,42 @@ export class AuthController {
     async signIn(
         @Body() signInUserDto: SignInUserRequestDto
     ) {
+        console.log(signInUserDto);
         const res = await this.authService.signIn(signInUserDto);
         return new SignInUserResponseDto(res);
     }
 
     @Public()
     @Get('refresh')
-    async getAccessToken(@Headers('refresh-token') refreshToken: string) {
-        const tokens = await this.authService.getAccessToken(refreshToken)
-        return tokens; //add Request and Response DTO
+    async getAccessToken(@Headers('refresh-token') refreshDto: string) {
+        const res = await this.authService.getAccessToken(refreshDto)
+        return new AccessResponseDto(res);
     }
 
-    //Move to User controller (service)
-    @UseGuards(AuthGuard)
-    @HttpCode(HttpStatus.OK)
-    @Post('account')
-    async getProfile(@Body() data: IUserWhereQuery) {
-        const res = await this.authService.getAccount(data);
-        return res;
+    @Public()
+    // Endpoint to handle the Forgot Password request
+    @Post('forgot-password')
+    async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Headers('host') host: string, @Res() res: Response) {
+        // Check if the user exists
+        try {
+            await this.authService.sendResetPasswordEmail(forgotPasswordDto, host, res);
+        } catch (error: any) {
+            throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Endpoint to handle password reset with the token
+    @Post('reset-password')
+    async resetPassword(
+        @Body() resetPasswordDto: ResetPasswordDto,
+        @Res() res: Response,
+        @Headers('reset-token') resetToken: string
+    ) {
+        console.log("Reset token", resetToken)
+        const email = await this.authService.validateResetToken(resetToken);
+        if (!email) {
+            throw new BadRequestException(HttpStatus.BAD_REQUEST);
+        }
+        await this.authService.updatePassword({ email: email, password: resetPasswordDto.newPasswordConfirm });
     }
 }
