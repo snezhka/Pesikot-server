@@ -6,14 +6,14 @@ import { EmailService } from './email.service';
 
 @Controller('email')
 export class EmailController {
-    constructor(private readonly emailService: EmailService) { }
+  constructor(private readonly emailService: EmailService) {}
 
-    @Public()
-    @HttpCode(HttpStatus.CREATED)
-    @Post('send')
-    async sendEmail(@Body() sendEmailDto: SendEmailDto) {
-        const { to, subject, html } = sendEmailDto;
-        console.log('Request received:', sendEmailDto);
-        await this.emailService.sendEmail({ to, subject, html });
-    }
+  @Public()
+  @HttpCode(HttpStatus.CREATED)
+  @Post('send')
+  async sendEmail(@Body() sendEmailDto: SendEmailDto) {
+    const { to, subject, html } = sendEmailDto;
+    console.log('Request received:', sendEmailDto);
+    await this.emailService.sendEmail({ to, subject, html });
+  }
 }

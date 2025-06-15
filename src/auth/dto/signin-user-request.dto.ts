@@ -1,21 +1,48 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MinLength, ValidateIf } from "class-validator";
+import { BadRequestException } from '@nestjs/common';
+import { AuthProvider, HttpCode } from 'src/utils/constants';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsNotEmptyObject,
+  ValidateNested,
+  validateSync,
+} from 'class-validator';
 
-export class SignInUserRequestDto {
+import { EmailSignInDto } from './email-sign-in.dto';
+import { PhoneSignInDto } from './phone-sign-in.dto';
+import { ExternalSignInDto } from './external-sign-in.dto';
+import { ISignInRequest } from 'src/utils/interfaces/auth';
 
-    @IsString()
-    type: 'email' | 'phone';
+export class SignInUserRequestDto implements ISignInRequest {
+  @IsEnum(AuthProvider)
+  provider: AuthProvider = AuthProvider.Email;
 
-    @ValidateIf((o) => o.type === 'email')
-    @IsEmail({}, { message: 'Please enter a valid email.' })
-    email: string;
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type((helper) => {
+    const errors = validateSync(helper?.newObject);
 
-    @ValidateIf((o) => o.type === 'phone')
-    @IsPhoneNumber('UA', { message: 'Please enter a valid phone number.' })
-    phoneNumber: string;
+    if (errors && errors.length) {
+      const providerError = errors.find(
+        (error) => error.property === 'provider',
+      );
+      if (providerError)
+        throw new BadRequestException(
+          Object.values(providerError.constraints!),
+        );
+    }
 
-    @ValidateIf((o) => o.type === 'email')
-    @IsString() // Ensures the password is a string
-    @IsNotEmpty({ message: 'Password is required.' }) // Ensures the password is not empty
-    @MinLength(8, { message: 'Password must be at least 8 characters long.' })
-    password: string;
+    switch (helper?.newObject.provider) {
+      case AuthProvider.Email:
+        return EmailSignInDto;
+      case AuthProvider.Phone:
+        return PhoneSignInDto;
+      case AuthProvider.External:
+        return ExternalSignInDto;
+
+      default:
+        throw new BadRequestException(HttpCode.UnsupportedOperation);
+    }
+  })
+  data!: EmailSignInDto | PhoneSignInDto | ExternalSignInDto;
 }

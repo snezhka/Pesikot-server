@@ -5,8 +5,13 @@ import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-  }), AuthModule, EmailModule, UserModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    AuthModule,
+    EmailModule,
+    UserModule,
+  ],
 })
-export class AppModule { }
+export class AppModule {}

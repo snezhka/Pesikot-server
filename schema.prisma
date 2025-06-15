@@ -15,11 +15,14 @@ generator dbml {
 
 model User {
   id Int @id @default(autoincrement())
-  email String @unique()
+  email String? @unique()
   username String? @unique()
-  password String
+  password String?
   phoneNumber String? @unique()
+  provider    String  // 'email' | 'phone' | 'external'
   metadata Json?   @db.JsonB 
+  createdDate DateTime @default(now())
+  updatedDate DateTime @updatedAt
 
   @@map("users")
 }

@@ -1,45 +1,21 @@
-import { IUserCreateByPhoneNumber, IUserCreateRequest } from "./user";
-import { IUserSignInResponse } from "./user";
+import { IUserCreateRequest } from './user';
+import { IUserSignInResponse } from './user';
 
+export interface ISignUpRequest extends IUserCreateRequest {}
 
-export interface ISignInPhoneNumber extends IUserCreateByPhoneNumber {
+export interface ISignInRequest extends IUserCreateRequest {}
 
-}
+export interface ISignInResponse extends IUserSignInResponse {}
 
-export interface ISignUpRequest extends IUserCreateRequest {
-    type: 'email'
-}
+export interface IAccesTokenResponse
+  extends Pick<IUserSignInResponse, 'accessToken'> {}
 
-interface ISignInWithEmail extends Pick<IUserCreateRequest, 'username' | 'email' | 'password'> {
-    type: 'email';
-};
+export interface IRefreshTokenRequest
+  extends Pick<IUserSignInResponse, 'refreshToken'> {}
 
-interface ISignInWithPhone extends Pick<IUserCreateRequest, 'phoneNumber'> {
-    type: 'phone';
-};
+export interface IForgotPassword extends Pick<IUserCreateRequest, 'email'> {}
 
-export type ISignInRequest = ISignInWithEmail | ISignInWithPhone;
+export interface IResetPassword extends Pick<IUserCreateRequest, 'password'> {}
 
-export interface ISignInResponse extends IUserSignInResponse {
-
-}
-
-export interface IAccesTokenResponse extends Pick<IUserSignInResponse, 'accessToken'> {
-
-}
-
-export interface IRefreshTokenRequest extends Pick<IUserSignInResponse, 'refreshToken'> {
-
-}
-
-export interface IForgotPassword extends Pick<IUserCreateRequest, 'email'> {
-
-}
-
-export interface IResetPassword extends Pick<IUserCreateRequest, 'password'> {
-
-}
-
-export interface IUpdatePassword extends Pick<IUserCreateRequest, 'email' | 'password'> {
-
-}
+export interface IUpdatePassword
+  extends Pick<IUserCreateRequest, 'email' | 'password'> {}
