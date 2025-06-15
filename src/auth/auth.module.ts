@@ -47,4 +47,4 @@ import { SmsModule } from 'src/sms/sms.module';
   //     UserModule,  // Assuming user service is being used
   // ],
 })
-export class AuthModule {}
+export class AuthModule { }

@@ -30,7 +30,7 @@ export class AuthService {
     private jwtService: JwtService,
     private emailService: EmailService,
     private smsService: SmsService,
-  ) {}
+  ) { }
 
   async signUp({ provider, data }): Promise<void> {
     const whereEmail = { email: data.email };
